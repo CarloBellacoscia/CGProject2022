@@ -1835,12 +1835,12 @@ void Pipeline::init(BaseProject *bp, const std::string& VertShader, const std::s
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.pDynamicState = nullptr; // Optional
+	//pipelineInfo.pDynamicState = nullptr; // Optional
 	pipelineInfo.layout = pipelineLayout;
 	pipelineInfo.renderPass = BP->renderPass;
 	pipelineInfo.subpass = 0;
-	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-	pipelineInfo.basePipelineIndex = -1; // Optional
+	//pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+	//pipelineInfo.basePipelineIndex = -1; // Optional
 	
 	result = vkCreateGraphicsPipelines(BP->device, VK_NULL_HANDLE, 1,
 			&pipelineInfo, nullptr, &graphicsPipeline);

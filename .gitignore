@@ -360,3 +360,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CGProject2022.vcxproj.filters
+/CGProject2022.sln
+/CGProject2022.vcxproj

@@ -511,9 +511,9 @@ class MyProject : public BaseProject {
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_WallS.indices.size()), 1, 0, 0, 0);
 
-		VkBuffer vertexBuffe10[] = { M_WallW.vertexBuffer };
+		VkBuffer vertexBuffer10[] = { M_WallW.vertexBuffer };
 		VkDeviceSize offsets10[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer9, offsets9);
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer10, offsets10);
 		vkCmdBindIndexBuffer(commandBuffer, M_WallW.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
 		vkCmdBindDescriptorSets(commandBuffer,
@@ -565,6 +565,15 @@ class MyProject : public BaseProject {
 
 		const float speed = 0.7;
 		const float angSpeed = 25.0;
+
+		if (glfwGetKey(window, GLFW_KEY_R)) {
+			ang = glm::vec3(10.0f, 90.0f, 0.0f);
+			pos = glm::vec3(1.0f, -0.75f, 0.0f);
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_Q)) {
+			ang = glm::vec3(10.0f, 90.0f, 0.0f);
+		}
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			pos.x -= deltaT * speed;
@@ -626,11 +635,9 @@ class MyProject : public BaseProject {
 							   glm::vec3(0.0f, 1.0f, 0.0f));*/
 
 		gubo.view = glm::rotate(glm::mat4(1.0), glm::radians(ang.z), glm::vec3(0, 0, 1)) *
-					  glm::rotate(glm::mat4(1.0), glm::radians(ang.x), glm::vec3(1, 0, 0)) *
-					  glm::rotate(glm::mat4(1.0), glm::radians(ang.y), glm::vec3(0, 1, 0)) *
-					  glm::translate(glm::mat4(1.0), pos);
-
-
+					glm::rotate(glm::mat4(1.0), glm::radians(ang.x), glm::vec3(1, 0, 0)) *
+					glm::rotate(glm::mat4(1.0), glm::radians(ang.y), glm::vec3(0, 1, 0)) *
+					glm::translate(glm::mat4(1.0), pos);
 
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
@@ -776,6 +783,7 @@ class MyProject : public BaseProject {
 
 // This is the main: probably you do not need to touch this!
 int main() {
+
     MyProject app;
 
     try {

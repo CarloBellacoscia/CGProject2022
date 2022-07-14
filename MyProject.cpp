@@ -2,13 +2,6 @@
 
 #include "MyProject.hpp"
 
-const std::string BODY_MODEL_PATH = "models/SlotBody.obj";
-const std::string BODY_TEXTURE_PATH = "textures/SlotBody.png";
-const std::string HANDLE_MODEL_PATH = "models/SlotHandle.obj";
-const std::string HANDLE_TEXTURE_PATH = "textures/SlotHandle.png";
-const std::string WHEEL_MODEL_PATH = "models/SlotWheel.obj";
-const std::string WHEEL_TEXTURE_PATH = "textures/SlotWheel.png";
-
 
 const std::string KEY_MODEL_PATH = "models/key.obj";
 const std::string GKEY_TEXTURE_PATH = "textures/GoldKey.png";
@@ -36,7 +29,7 @@ const std::string WALLW_MODEL_PATH = "models/wallW.obj";
 const std::string WALL_TEXTURE_PATH = "textures/EOBRB01.png";
 
 glm::vec3 ang = glm::vec3(10.0f, 90.0f, 0.0f);
-glm::vec3 pos = glm::vec3(1.0f, -0.75f, 0.0f);
+glm::vec3 pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
 
 
 
@@ -63,21 +56,6 @@ class MyProject : public BaseProject {
 	// Pipelines [Shader couples]
 	Pipeline P1;
 
-	// Models, textures and Descriptors (values assigned to the uniforms)
-	/*Model M_SlBody;
-	Texture T_SlBody;
-	DescriptorSet DS_SlBody;	// instance DSLobj
-
-	Model M_SlHandle;
-	Texture T_SlHandle;
-	DescriptorSet DS_SlHandle;	// instance DSLobj
-
-	Model M_SlWheel;
-	Texture T_SlWheel;
-	DescriptorSet DS_SlWheel1;	// instance DSLobj
-	DescriptorSet DS_SlWheel2;	// instance DSLobj
-	DescriptorSet DS_SlWheel3;	// instance DSLobj*/
-
 	
 	Model M_Key;
 	Texture T_GKey;
@@ -91,15 +69,25 @@ class MyProject : public BaseProject {
 
 	Model M_Lever;
 	Texture T_Lever;
-	DescriptorSet DS_Lever;	// instance DSLobj
+	DescriptorSet DS_Lever1;	// instance DSLobj
+	DescriptorSet DS_Lever2;	// instance DSLobj
+	DescriptorSet DS_Lever3;	// instance DSLobj
 
 	Model M_Door;
 	Texture T_Door;
-	DescriptorSet DS_Door;	// instance DSLobj
+	DescriptorSet DS_Door1;	// instance DSLobj
+	DescriptorSet DS_Door2;	// instance DSLobj
+	DescriptorSet DS_Door3;	// instance DSLobj
+	DescriptorSet DS_Door4;	// instance DSLobj
+	DescriptorSet DS_Door5;	// instance DSLobj
 
 	Model M_SDoor;
 	Texture T_SDoor;
-	DescriptorSet DS_SDoor;	// instance DSLobj
+	DescriptorSet DS_SDoor1;	// instance DSLobj
+	DescriptorSet DS_SDoor2;	// instance DSLobj
+	DescriptorSet DS_SDoor3;	// instance DSLobj
+	DescriptorSet DS_SDoor4;	// instance DSLobj
+	DescriptorSet DS_SDoor5;	// instance DSLobj
 
 	Model M_Ceiling;
 	Texture T_Ceiling;
@@ -128,7 +116,7 @@ class MyProject : public BaseProject {
 		// Descriptor pool sizes (CHANGE BASED ON THE NUMEBRE OF THE OBJECTS)
 		uniformBlocksInPool = 13;
 		texturesInPool = 11;
-		setsInPool = 14;
+		setsInPool = 24;
 	}
 	
 	// Here you load and setup all your Vulkan objects
@@ -152,42 +140,6 @@ class MyProject : public BaseProject {
 		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", {&DSLglobal, &DSLobj});
 
 		// Models, textures and Descriptors (values assigned to the uniforms)
-		/*M_SlBody.init(this, BODY_MODEL_PATH);
-		T_SlBody.init(this, BODY_TEXTURE_PATH);
-		DS_SlBody.init(this, &DSLobj, {
-		// the second parameter, is a pointer to the Uniform Set Layout of this set
-		// the last parameter is an array, with one element per binding of the set.
-		// first  elmenet : the binding number
-		// second element : UNIFORM or TEXTURE (an enum) depending on the type
-		// third  element : only for UNIFORMs, the size of the corresponding C++ object
-		// fourth element : only for TEXTUREs, the pointer to the corresponding texture object
-					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
-					{1, TEXTURE, 0, &T_SlBody}
-				});
-
-		M_SlHandle.init(this, HANDLE_MODEL_PATH);
-		T_SlHandle.init(this, HANDLE_TEXTURE_PATH);
-		DS_SlHandle.init(this, &DSLobj, {
-						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
-						{1, TEXTURE, 0, &T_SlHandle}
-			});
-
-		M_SlWheel.init(this, WHEEL_MODEL_PATH);
-		T_SlWheel.init(this, WHEEL_TEXTURE_PATH);
-		DS_SlWheel1.init(this, &DSLobj, {
-						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
-						{1, TEXTURE, 0, &T_SlWheel}
-			});
-		DS_SlWheel2.init(this, &DSLobj, {
-				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
-				{1, TEXTURE, 0, &T_SlWheel}
-			});
-		DS_SlWheel3.init(this, &DSLobj, {
-				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
-				{1, TEXTURE, 0, &T_SlWheel}
-			});*/
-
-		
 		M_Key.init(this, KEY_MODEL_PATH);
 		T_GKey.init(this, GKEY_TEXTURE_PATH);
 		DS_GKey.init(this, &DSLobj, {
@@ -209,23 +161,63 @@ class MyProject : public BaseProject {
 
 		M_Lever.init(this, LEVER_MODEL_PATH);
 		T_Lever.init(this, LEVER_TEXTURE_PATH);
-		DS_Lever.init(this, &DSLobj, {
+		DS_Lever1.init(this, &DSLobj, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &T_Lever}
+			});
+		DS_Lever2.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Lever}
+			});
+		DS_Lever3.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Lever}
 			});
 
 		M_Door.init(this, DOOR_MODEL_PATH);
 		T_Door.init(this, DOOR_TEXTURE_PATH);
-		DS_Door.init(this, &DSLobj, {
+		DS_Door1.init(this, &DSLobj, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &T_Door}
+			});
+		DS_Door2.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Door}
+			});
+		DS_Door3.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Door}
+			});
+		DS_Door4.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Door}
+			});
+		DS_Door5.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Door}
 			});
 
 		M_SDoor.init(this, SINGLE_DOOR_MODEL_PATH);
 		T_SDoor.init(this, SINGLE_DOOR_TEXTURE_PATH);
-		DS_SDoor.init(this, &DSLobj, {
+		DS_SDoor1.init(this, &DSLobj, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &T_SDoor}
+			});
+		DS_SDoor2.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_SDoor}
+			});
+		DS_SDoor3.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_SDoor}
+			});
+		DS_SDoor4.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_SDoor}
+			});
+		DS_SDoor5.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_SDoor}
 			});
 
 		M_Ceiling.init(this, CEILING_MODEL_PATH);
@@ -266,21 +258,7 @@ class MyProject : public BaseProject {
 
 	// Here you destroy all the objects you created!		
 	void localCleanup() {
-		/*DS_SlBody.cleanup();
-		T_SlBody.cleanup();
-		M_SlBody.cleanup();
 
-		DS_SlHandle.cleanup();
-		T_SlHandle.cleanup();
-		M_SlHandle.cleanup();
-
-		DS_SlWheel1.cleanup();
-		DS_SlWheel2.cleanup();
-		DS_SlWheel3.cleanup();
-		T_SlWheel.cleanup();
-		M_SlWheel.cleanup();*/
-
-		
 		DS_GKey.cleanup();
 		T_GKey.cleanup();
 		DS_CKey.cleanup();
@@ -291,15 +269,25 @@ class MyProject : public BaseProject {
 		T_Floor.cleanup();
 		M_Floor.cleanup();
 
-		DS_Lever.cleanup();
+		DS_Lever1.cleanup();
+		DS_Lever2.cleanup();
+		DS_Lever3.cleanup();
 		T_Lever.cleanup();
 		M_Lever.cleanup();
 
-		DS_Door.cleanup();
+		DS_Door1.cleanup();
+		DS_Door2.cleanup();
+		DS_Door3.cleanup();
+		DS_Door4.cleanup();
+		DS_Door5.cleanup();
 		T_Door.cleanup();
 		M_Door.cleanup();
 
-		DS_SDoor.cleanup();
+		DS_SDoor1.cleanup();
+		DS_SDoor2.cleanup();
+		DS_SDoor3.cleanup();
+		DS_SDoor4.cleanup();
+		DS_SDoor5.cleanup();
 		T_SDoor.cleanup();
 		M_SDoor.cleanup();
 
@@ -337,64 +325,7 @@ class MyProject : public BaseProject {
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 0, 1, &DS_global.descriptorSets[currentImage],
 			0, nullptr);
-				
-		/*VkBuffer vertexBuffers[] = {M_SlBody.vertexBuffer};
-		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		VkDeviceSize offsets[] = {0};
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-		vkCmdBindIndexBuffer(commandBuffer, M_SlBody.indexBuffer, 0,
-								VK_INDEX_TYPE_UINT32);
 
-		// property .pipelineLayout of a pipeline contains its layout.
-		// property .descriptorSets of a descriptor set contains its elements.
-		vkCmdBindDescriptorSets(commandBuffer,
-						VK_PIPELINE_BIND_POINT_GRAPHICS,
-						P1.pipelineLayout, 1, 1, &DS_SlBody.descriptorSets[currentImage],
-						0, nullptr);
-						
-		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
-		vkCmdDrawIndexed(commandBuffer,
-					static_cast<uint32_t>(M_SlBody.indices.size()), 1, 0, 0, 0);
-
-		VkBuffer vertexBuffers2[] = { M_SlHandle.vertexBuffer };
-		VkDeviceSize offsets2[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers2, offsets2);
-		vkCmdBindIndexBuffer(commandBuffer, M_SlHandle.indexBuffer, 0,
-			VK_INDEX_TYPE_UINT32);
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_SlHandle.descriptorSets[currentImage],
-			0, nullptr);
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_SlHandle.indices.size()), 1, 0, 0, 0);
-
-		VkBuffer vertexBuffers3[] = { M_SlWheel.vertexBuffer };
-		VkDeviceSize offsets3[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers3, offsets3);
-		vkCmdBindIndexBuffer(commandBuffer, M_SlWheel.indexBuffer, 0,
-			VK_INDEX_TYPE_UINT32);
-
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_SlWheel1.descriptorSets[currentImage],
-			0, nullptr);
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_SlWheel.indices.size()), 1, 0, 0, 0);
-
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_SlWheel2.descriptorSets[currentImage],
-			0, nullptr);
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_SlWheel.indices.size()), 1, 0, 0, 0);
-
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_SlWheel3.descriptorSets[currentImage],
-			0, nullptr);
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_SlWheel.indices.size()), 1, 0, 0, 0);*/
 
 		
 		VkBuffer vertexBuffers[] = { M_Key.vertexBuffer};
@@ -432,9 +363,24 @@ class MyProject : public BaseProject {
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers3, offsets3);
 		vkCmdBindIndexBuffer(commandBuffer, M_Lever.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_Lever.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_Lever1.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Lever.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Lever2.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Lever.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Lever3.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Lever.indices.size()), 1, 0, 0, 0);
@@ -444,9 +390,38 @@ class MyProject : public BaseProject {
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers4, offsets4);
 		vkCmdBindIndexBuffer(commandBuffer, M_Door.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_Door.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_Door1.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Door.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Door2.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Door.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Door3.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Door.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Door4.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Door.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Door5.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Door.indices.size()), 1, 0, 0, 0);
@@ -456,9 +431,38 @@ class MyProject : public BaseProject {
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer5, offsets5);
 		vkCmdBindIndexBuffer(commandBuffer, M_SDoor.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 1, 1, &DS_SDoor.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_SDoor1.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_SDoor.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_SDoor2.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_SDoor.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_SDoor3.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_SDoor.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_SDoor4.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_SDoor.indices.size()), 1, 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_SDoor5.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_SDoor.indices.size()), 1, 0, 0, 0);
@@ -538,37 +542,13 @@ class MyProject : public BaseProject {
 		float deltaT = time - lastTime;
 
 		lastTime = time;
-					
-		static int state = 0;	// 0 -> everything is still
-								// 1 -> one wheel is turning
-								// 2 -> two wheels are turning
-								// 3 -> three wheels are turning
-
-		static float debounce = time;
-		static float ang1 = 0.0f;
-		static float ang2 = 0.0f;
-		static float ang3 = 0.0f;
-		static float angHandle = 0.0f;
-
-		/*if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-			if (time - debounce > 0.33) {
-				debounce = time;
-
-				if (state == 0) {
-					state = 3;
-				}
-				else {
-					state--;
-				}
-			}
-		}*/
 
 		const float speed = 0.7;
 		const float angSpeed = 25.0;
 
 		if (glfwGetKey(window, GLFW_KEY_R)) {
 			ang = glm::vec3(10.0f, 90.0f, 0.0f);
-			pos = glm::vec3(1.0f, -0.75f, 0.0f);
+			pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_Q)) {
@@ -607,20 +587,6 @@ class MyProject : public BaseProject {
 		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
 			ang.x += deltaT * angSpeed;
 		}
-
-		if (state == 3) {
-			angHandle = 1.0f;
-			ang3 += deltaT;
-		}
-		if (state >= 2) {
-			ang2 += deltaT;
-		}
-		if (state >= 1) {
-			ang1 += deltaT;
-		}
-		if(state == 0) {
-			angHandle = 0.0f;
-		}
 					
 		globalUniformBufferObject gubo{}; 
 		UniformBufferObject ubo{};
@@ -652,63 +618,15 @@ class MyProject : public BaseProject {
 		
 		// Here is where you actually update your uniforms
 
-		//For the Slot Body
-		/*ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f));
-		vkMapMemory(device, DS_SlBody.uniformBuffersMemory[0][currentImage], 0,
-							sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SlBody.uniformBuffersMemory[0][currentImage]);
-
-		//For the Slot Handle
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.3f, 0.0f, -0.15f)) *
-					glm::rotate(glm::mat4(1.0f),
-						angHandle * glm::radians(90.0f),
-						glm::vec3(1.0f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_SlHandle.uniformBuffersMemory[0][currentImage], 0,
-			sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SlHandle.uniformBuffersMemory[0][currentImage]);
-
-		//For the Slot Wheel1
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.15f, 0.43f, -0.15f)) *
-					glm::rotate(glm::mat4(1.0f),
-						ang1 * glm::radians(90.0f),
-						glm::vec3(1.0f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_SlWheel1.uniformBuffersMemory[0][currentImage], 0,
-			sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SlWheel1.uniformBuffersMemory[0][currentImage]);
-
-		//For the Slot Wheel2
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.43f, -0.15f)) *
-					glm::rotate(glm::mat4(1.0f),
-						ang2 * glm::radians(90.0f),
-						glm::vec3(1.0f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_SlWheel2.uniformBuffersMemory[0][currentImage], 0,
-			sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SlWheel2.uniformBuffersMemory[0][currentImage]);
-
-		//For the Slot Wheel3
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.15f, 0.43f, -0.15f)) *
-					glm::rotate(glm::mat4(1.0f),
-						ang3 * glm::radians(90.0f),
-						glm::vec3(1.0f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_SlWheel3.uniformBuffersMemory[0][currentImage], 0,
-			sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SlWheel3.uniformBuffersMemory[0][currentImage]);*/
-
-		
 		//For the Golden Key
-		ubo.model = glm::mat4(1.0f);
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 0.0f, -8.0f));
 		vkMapMemory(device, DS_GKey.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_GKey.uniformBuffersMemory[0][currentImage]);
 
 		//For the Copper Key
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, 3.0f));
 		vkMapMemory(device, DS_CKey.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
@@ -722,25 +640,85 @@ class MyProject : public BaseProject {
 		vkUnmapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage]);
 
 		//For the Lever
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_Lever.uniformBuffersMemory[0][currentImage], 0,
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.40f, 0.507397f, 2.2f));
+		vkMapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_Lever.uniformBuffersMemory[0][currentImage]);
+		vkUnmapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage]);
 
-		//For the Door
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_Door.uniformBuffersMemory[0][currentImage], 0,
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(8.30f, 0.507397f, 3.60f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_Door.uniformBuffersMemory[0][currentImage]);
+		vkUnmapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.30f, 0.507397f, -1.40f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Lever3.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Lever3.uniformBuffersMemory[0][currentImage]);
+
+		//For the Doors
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, -2.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Door1.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Door1.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(7.0f, 0.0f, 8.0f));
+		vkMapMemory(device, DS_Door2.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Door2.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(9.0f, 0.0f, 3.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Door3.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Door3.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.0f, 4.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Door4.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Door4.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
+		vkMapMemory(device, DS_Door5.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Door5.uniformBuffersMemory[0][currentImage]);
 
 		//For the Single Door
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, 0.0f));
-		vkMapMemory(device, DS_SDoor.uniformBuffersMemory[0][currentImage], 0,
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, -2.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_SDoor1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, DS_SDoor.uniformBuffersMemory[0][currentImage]);
+		vkUnmapMemory(device, DS_SDoor1.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(7.0f, 0.0f, 8.0f));
+		vkMapMemory(device, DS_SDoor2.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_SDoor2.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(9.0f, 0.0f, 3.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_SDoor3.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_SDoor3.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.0f, 4.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_SDoor4.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_SDoor4.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
+		vkMapMemory(device, DS_SDoor5.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_SDoor5.uniformBuffersMemory[0][currentImage]);
 
 		//For the Ceiling
 		ubo.model = glm::mat4(1.0f);

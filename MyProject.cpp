@@ -38,6 +38,8 @@ const std::string WALL_TEXTURE_PATH = "textures/EOBRB01.png";
 glm::vec3 ang = glm::vec3(10.0f, 90.0f, 0.0f);
 glm::vec3 pos = glm::vec3(1.0f, -0.75f, 0.0f);
 
+glm::vec3 dirX = glm::vec3(1.0f, 0.0f, 0.0f);
+glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
 
 
 // The uniform buffer object used in this example
@@ -566,6 +568,24 @@ class MyProject : public BaseProject {
 		const float speed = 0.7;
 		const float angSpeed = 25.0;
 
+		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+			ang.y -= deltaT * angSpeed;
+			//dirX = glm::vec3(glm::rotate(glm::mat4(1.0f), -deltaT * angSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(dirX, 1.0f));
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+			ang.y += deltaT * angSpeed;
+			//dirX = glm::vec3(glm::rotate(glm::mat4(1.0f), -deltaT * angSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(dirX, 1.0f));
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_UP)) {
+			ang.x -= deltaT * angSpeed;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+			ang.x += deltaT * angSpeed;
+		}
+
 		if (glfwGetKey(window, GLFW_KEY_R)) {
 			ang = glm::vec3(10.0f, 90.0f, 0.0f);
 			pos = glm::vec3(1.0f, -0.75f, 0.0f);
@@ -576,36 +596,25 @@ class MyProject : public BaseProject {
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
-			pos.x -= deltaT * speed;
+			//pos -= deltaT * speed * dirX;
+			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
-			pos.x += deltaT * speed;
+			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
-			pos.z -= deltaT * speed;
+			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
-			pos.z += deltaT * speed;
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-			ang.y -= deltaT * angSpeed;
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-			ang.y += deltaT * angSpeed;
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_UP)) {
-			ang.x -= deltaT * angSpeed;
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-			ang.x += deltaT * angSpeed;
+			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 		}
 
 		if (state == 3) {
@@ -638,7 +647,6 @@ class MyProject : public BaseProject {
 					glm::rotate(glm::mat4(1.0), glm::radians(ang.x), glm::vec3(1, 0, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(ang.y), glm::vec3(0, 1, 0)) *
 					glm::translate(glm::mat4(1.0), pos);
-
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
 						swapChainExtent.width / (float) swapChainExtent.height,

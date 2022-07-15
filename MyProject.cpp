@@ -38,9 +38,12 @@ glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
 
 int MAP[24][24];
 
-int doorStatus = 0;
-float leverAngle = 0.0f;
-float deltaDoor = 0.0f;
+float leverAngle[3] = { 0.0f, 0.0f, 0.0f };
+int doorStatus[5] = {0,0,0,0,0};
+float deltaDoor[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+float deltaKey[2] = { 0.0f, 0.0f };
+int hasKey[2] = { 0, 0 };
+
 
 
 // The uniform buffer object used in this example
@@ -628,28 +631,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 			if (time - debounce > 0.33) {
-				if (doorStatus == 0) {
-					doorStatus = 1;
-				}
-				else
-					doorStatus = 0;
+				interact();
 				debounce = time;
-				std::cout << "Door status: " << doorStatus << "\n";
 			}
-		}
-
-		switch (doorStatus)
-		{
-		case 0:
-			leverAngle = 0.0f;
-			deltaDoor = 0.0f;
-			break;
-		case 1:
-			leverAngle = 30.0f;
-			deltaDoor = 0.8f;
-			break;
-		default:
-			break;
 		}
 
 					
@@ -683,14 +667,14 @@ class MyProject : public BaseProject {
 		// Here is where you actually update your uniforms
 
 		//For the Golden Key
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 0.0f, -8.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, deltaKey[1], -8.0f));
 		vkMapMemory(device, DS_GKey.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_GKey.uniformBuffersMemory[0][currentImage]);
 
 		//For the Copper Key
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, 3.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, deltaKey[0], 3.0f));
 		vkMapMemory(device, DS_CKey.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
@@ -705,19 +689,23 @@ class MyProject : public BaseProject {
 
 		//For the Lever
 		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.50f, 0.507397f, 0.2f)) *
-			glm::rotate(glm::mat4(1.0f), -leverAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+			glm::rotate(glm::mat4(1.0f), -leverAngle[0], glm::vec3(0.0f, 0.0f, 1.0f));
 		vkMapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.10f, 0.507397f, 3.50f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.10f, 0.507397f, 3.50f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::rotate(glm::mat4(1.0f), -leverAngle[1], glm::vec3(0.0f, 0.0f, 1.0f));
 		vkMapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.15f, 0.507397f, -1.50f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.15f, 0.507397f, -1.50f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::rotate(glm::mat4(1.0f), -leverAngle[2], glm::vec3(0.0f, 0.0f, 1.0f));
 		vkMapMemory(device, DS_Lever3.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
@@ -755,31 +743,31 @@ class MyProject : public BaseProject {
 		vkUnmapMemory(device, DS_Door5.uniformBuffersMemory[0][currentImage]);
 
 		//For the Single Door
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, -2.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, deltaDoor[0], 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
 		vkMapMemory(device, DS_SDoor1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_SDoor1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(7.0f, 0.0f, 8.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(9.0f, deltaDoor[1], 3.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_SDoor2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_SDoor2.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(9.0f, 0.0f, 3.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, deltaDoor[2], -2.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_SDoor3.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_SDoor3.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.0f, 4.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(7.0f, deltaDoor[3], 8.0f));
 		vkMapMemory(device, DS_SDoor4.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_SDoor4.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, deltaDoor, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, deltaDoor[4], 4.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_SDoor5.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
@@ -895,6 +883,88 @@ class MyProject : public BaseProject {
 			return true;
 		}
 		return false;
+	}
+
+	void interact() {
+
+		int i = -1;
+
+		// switch lever by position
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 7 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
+			switch ((int)std::round(-pos.z + 9)) {
+			case 11:
+				i = 0;
+				break;
+			case 13:
+				i = 1;
+				break;
+			case 8:
+				i = 2;
+				break;
+			}
+		}
+
+		// collect the keys
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 5 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 5 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 5 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 5 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 5) {
+			hasKey[0] = 1;
+			deltaKey[0] = -0.2;
+		}
+		else if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 6 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 6 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 6 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 6 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 6) {
+			hasKey[1] = 1;
+			deltaKey[1] = -0.2;
+		}
+
+		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3)
+			&& hasKey[0] == 1) {
+			i = 3;
+		}
+		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4)
+			&& hasKey[1] == 1) {
+			i = 4;
+		}
+
+		// animation of lever and doors
+		if (doorStatus[i] == 0) {
+			doorStatus[i] = 1;
+		}
+		else
+			doorStatus[i] = 0;
+		
+		switch (doorStatus[i])
+		{
+		case 0:
+			deltaDoor[i] = 0.0f;
+			if(i<2)
+				leverAngle[i] = 0.0f;
+			break;
+		case 1:
+			deltaDoor[i] = 0.9f;
+			if(i<2)
+				leverAngle[i] = 30.0f;
+			break;
+		default:
+			break;
+		}
 	}
 };
 

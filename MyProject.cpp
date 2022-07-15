@@ -2,6 +2,7 @@
 
 #include "MyProject.hpp"
 
+const std::string MAP_PATH = "textures/map.txt";
 
 const std::string KEY_MODEL_PATH = "models/key.obj";
 const std::string GKEY_TEXTURE_PATH = "textures/GoldKey.png";
@@ -33,6 +34,8 @@ glm::vec3 pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
 
 glm::vec3 dirX = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
+
+int MAP[24][24];
 
 
 // The uniform buffer object used in this example
@@ -135,6 +138,8 @@ class MyProject : public BaseProject {
 		DSLglobal.init(this, {
 			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS},
 			});
+
+		setMap();
 
 		// Pipelines [Shader couples]
 		// The last array, is a vector of pointer to the layouts of the sets that will
@@ -541,6 +546,7 @@ class MyProject : public BaseProject {
 		float time = std::chrono::duration<float, std::chrono::seconds::period>
 					(currentTime - startTime).count();
 
+
 		float deltaT = time - lastTime;
 
 		lastTime = time;
@@ -576,26 +582,22 @@ class MyProject : public BaseProject {
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
-			//pos -= deltaT * speed * dirX;
-			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
-				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+			pos.x -= deltaT * speed;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
-			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
-				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
+			pos.x += deltaT * speed;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
-			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
-				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
+			pos.z -= deltaT * speed;
 
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
-			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), ang.x,
-				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
+			pos.z += deltaT * speed;
 		}
+
 					
 		globalUniformBufferObject gubo{}; 
 		UniformBufferObject ubo{};
@@ -765,6 +767,70 @@ class MyProject : public BaseProject {
 		
 
 	}	
+
+	//draw a circle of radius 10 in a fixed position
+	int curText = 0;
+	stbi_uc* stationMap;
+	int stationMapWidth, stationMapHeight;
+	bool canStepPoint(float x, float y) {
+		int pixX = round(fmax(0.0f, fmin(stationMapWidth - 1, (x + 10) * stationMapWidth / 20.0)));
+		int pixY = round(fmax(0.0f, fmin(stationMapHeight - 1, (y + 10) * stationMapHeight / 20.0)));
+		int pix = (int)stationMap[stationMapWidth * pixY + pixX];
+		//std::cout << pixX << " " << pixY << " " << x << " " << y << " \t P = " << pix << "\n";		
+		return pix > 128;
+	}
+	const float checkRadius = 0.1;
+	const int checkSteps = 12;
+	bool canStep(float x, float y) {
+		for (int i = 0; i < checkSteps; i++) {
+			if (!canStepPoint(x + cos(6.2832 * i / (float)checkSteps) * checkRadius,
+				y + sin(6.2832 * i / (float)checkSteps) * checkRadius)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void setMap() {
+
+		std::fstream newfile;
+		newfile.open(MAP_PATH, std::ios::in); //open a file to perform read operation using file object
+		if (newfile.is_open()) {   //checking whether the file is open
+			std::string tp;
+			int i = 0;
+			while (getline(newfile, tp)) { //read data from file object and put it into string.
+				for (int k = 0; k <= tp.size(); k++) {
+					switch (tp.c_str()[k]) {
+					case ' ':
+						MAP[i][k] = 1;
+						break;
+					case 'D':
+						MAP[i][k] = 2;
+						break;
+					case 'c':
+						MAP[i][k] = 3;
+						break;
+					case 'g':
+						MAP[i][k] = 4;
+						break;
+					case 'C':
+						MAP[i][k] = 5;
+						break;
+					case 'G':
+						MAP[i][k] = 6;
+						break;
+					case 'L':
+						MAP[i][k] = 7;
+						break;
+					default:
+						MAP[i][k] = 0;
+					}
+				}
+				i++;
+			}
+			newfile.close(); //close the file object.
+		}
+	}
 };
 
 // This is the main: probably you do not need to touch this!

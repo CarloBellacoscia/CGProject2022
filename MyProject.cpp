@@ -551,6 +551,8 @@ class MyProject : public BaseProject {
 
 		lastTime = time;
 
+		glm::vec3 lastPos = pos;
+
 		const float speed = 0.7;
 		const float angSpeed = 25.0;
 
@@ -582,20 +584,39 @@ class MyProject : public BaseProject {
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
+			lastPos = pos;
 			pos.x -= deltaT * speed;
+			if (!possiblePos(pos)) {
+				pos = lastPos;
+			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
+			lastPos = pos;
 			pos.x += deltaT * speed;
+			possiblePos(pos);
+			if (!possiblePos(pos)) {
+				pos = lastPos;
+			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
+			lastPos = pos;
 			pos.z -= deltaT * speed;
+			possiblePos(pos);
+			if (!possiblePos(pos)) {
+				pos = lastPos;
+			}
 
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
+			lastPos = pos;
 			pos.z += deltaT * speed;
+			possiblePos(pos);
+			if (!possiblePos(pos)) {
+				pos = lastPos;
+			}
 		}
 
 					
@@ -825,11 +846,21 @@ class MyProject : public BaseProject {
 					default:
 						MAP[i][k] = 0;
 					}
+					std::cout << MAP[i][k];
 				}
+				std::cout << "\n";
 				i++;
 			}
+			std::cout << MAP[1][16];
 			newfile.close(); //close the file object.
 		}
+	}
+
+	bool possiblePos(glm::vec3 pos) {
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
+			return true;
+		}
+		return false;
 	}
 };
 

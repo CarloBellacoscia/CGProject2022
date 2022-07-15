@@ -37,6 +37,10 @@ glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
 
 int MAP[24][24];
 
+int doorStatus = 0;
+float leverAngle = 0.0f;
+float deltaDoor = 0.0f;
+
 
 // The uniform buffer object used in this example
 struct globalUniformBufferObject {
@@ -119,8 +123,8 @@ class MyProject : public BaseProject {
 		initialBackgroundColor = {0.01f, 0.03f, 0.01f, 1.0f};
 		
 		// Descriptor pool sizes (CHANGE BASED ON THE NUMEBRE OF THE OBJECTS)
-		uniformBlocksInPool = 13;
-		texturesInPool = 11;
+		uniformBlocksInPool = 24;
+		texturesInPool = 24;
 		setsInPool = 24;
 	}
 	
@@ -551,6 +555,8 @@ class MyProject : public BaseProject {
 
 		lastTime = time;
 
+		static float debounce = time;
+
 		glm::vec3 lastPos = pos;
 
 		const float speed = 0.7;
@@ -619,6 +625,32 @@ class MyProject : public BaseProject {
 			}
 		}
 
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			if (time - debounce > 0.33) {
+				if (doorStatus == 0) {
+					doorStatus = 1;
+				}
+				else
+					doorStatus = 0;
+				debounce = time;
+				std::cout << "Door status: " << doorStatus << "\n";
+			}
+		}
+
+		switch (doorStatus)
+		{
+		case 0:
+			leverAngle = 0.0f;
+			deltaDoor = 0.0f;
+			break;
+		case 1:
+			leverAngle = 30.0f;
+			deltaDoor = 0.8f;
+			break;
+		default:
+			break;
+		}
+
 					
 		globalUniformBufferObject gubo{}; 
 		UniformBufferObject ubo{};
@@ -671,7 +703,8 @@ class MyProject : public BaseProject {
 		vkUnmapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage]);
 
 		//For the Lever
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.40f, 0.507397f, 2.2f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.40f, 0.507397f, 2.2f)) *
+			glm::rotate(glm::mat4(1.0f), leverAngle, glm::vec3(0.0f, 0.0f, 1.0f));
 		vkMapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
@@ -745,7 +778,7 @@ class MyProject : public BaseProject {
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_SDoor4.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, deltaDoor, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 3.0f));
 		vkMapMemory(device, DS_SDoor5.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));

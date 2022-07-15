@@ -29,6 +29,10 @@ const std::string WALLS_MODEL_PATH = "models/wallS.obj";
 const std::string WALLW_MODEL_PATH = "models/wallW.obj";
 const std::string WALL_TEXTURE_PATH = "textures/EOBRB01.png";
 
+const std::string TEXT_MODEL_PATH = "models/text.obj";
+const std::string INTERACT_TEXTURE_PATH = "textures/interact.png";
+const std::string NEED_KEY_TEXTURE_PATH = "textures/needKey.png";
+
 glm::vec3 ang = glm::vec3(10.0f, 90.0f, 0.0f);
 glm::vec3 pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
 
@@ -43,6 +47,9 @@ int doorStatus[5] = {0,0,0,0,0};
 float deltaDoor[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 float deltaKey[2] = { 0.0f, 0.0f };
 int hasKey[2] = { 0, 0 };
+
+int seeInteract[5] = { 0, 0, 0, 0, 0 };
+int seeNeedKey[2] = { 0, 0 };
 
 
 
@@ -116,6 +123,17 @@ class MyProject : public BaseProject {
 	Model M_WallW;
 	DescriptorSet DS_WallW;	// instance DSLobj
 
+	Model M_Text;
+	Texture T_Interact;
+	Texture T_NeedKey;
+	DescriptorSet DS_Interact1;	// instance DSLobj
+	DescriptorSet DS_Interact2;	// instance DSLobj
+	DescriptorSet DS_Interact3;	// instance DSLobj
+	DescriptorSet DS_Interact4;	// instance DSLobj
+	DescriptorSet DS_Interact5;	// instance DSLobj
+	DescriptorSet DS_NeedKey1;	// instance DSLobj
+	DescriptorSet DS_NeedKey2;	// instance DSLobj
+
 	DescriptorSet DS_global;	// instance DSLglobal
 	
 	// Here you set the main application parameters
@@ -127,9 +145,9 @@ class MyProject : public BaseProject {
 		initialBackgroundColor = {0.01f, 0.03f, 0.01f, 1.0f};
 		
 		// Descriptor pool sizes (CHANGE BASED ON THE NUMEBRE OF THE OBJECTS)
-		uniformBlocksInPool = 24;
-		texturesInPool = 24;
-		setsInPool = 24;
+		uniformBlocksInPool = 25;
+		texturesInPool = 26;
+		setsInPool = 31;
 	}
 	
 	// Here you load and setup all your Vulkan objects
@@ -263,6 +281,40 @@ class MyProject : public BaseProject {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &T_Wall}
 			});
+
+		M_Text.init(this, TEXT_MODEL_PATH);
+		T_Interact.init(this, INTERACT_TEXTURE_PATH);
+		T_NeedKey.init(this, NEED_KEY_TEXTURE_PATH);
+
+		DS_Interact1.init(this, &DSLobj, {
+						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+						{1, TEXTURE, 0, &T_Interact}
+			});
+		DS_Interact2.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Interact}
+			});
+		DS_Interact3.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Interact}
+			});
+		DS_Interact4.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Interact}
+			});
+		DS_Interact5.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_Interact}
+			});
+
+		DS_NeedKey1.init(this, &DSLobj, {
+				{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+				{1, TEXTURE, 0, &T_NeedKey}
+			});
+		DS_NeedKey2.init(this, &DSLobj, {
+		{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+		{1, TEXTURE, 0, &T_NeedKey}
+			});
 		
 
 
@@ -319,6 +371,17 @@ class MyProject : public BaseProject {
 		DS_WallW.cleanup();
 		M_WallW.cleanup();
 		T_Wall.cleanup();
+
+		DS_Interact1.cleanup();
+		DS_Interact2.cleanup();
+		DS_Interact3.cleanup();
+		DS_Interact4.cleanup();
+		DS_Interact5.cleanup();
+		DS_NeedKey1.cleanup();
+		DS_NeedKey2.cleanup();
+		T_Interact.cleanup();
+		T_NeedKey.cleanup();
+		M_Text.cleanup();
 
 		DS_global.cleanup();
 
@@ -541,6 +604,56 @@ class MyProject : public BaseProject {
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
+
+		VkBuffer vertexBuffer11[] = { M_Text.vertexBuffer };
+		VkDeviceSize offsets11[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffer11, offsets11);
+		vkCmdBindIndexBuffer(commandBuffer, M_Text.indexBuffer, 0,
+			VK_INDEX_TYPE_UINT32);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Interact1.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[0], 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Interact2.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[1], 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Interact3.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[2], 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Interact4.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[3], 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Interact5.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[4], 0, 0, 0);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_NeedKey1.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeNeedKey[0], 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_NeedKey2.descriptorSets[currentImage],
+			0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_WallW.indices.size()), seeNeedKey[1], 0, 0, 0);
 		
 	}
 
@@ -596,37 +709,34 @@ class MyProject : public BaseProject {
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
 			pos.x -= deltaT * speed;
-			/*if (!possiblePos(pos)) {
+			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}*/
+			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			lastPos = pos;
 			pos.x += deltaT * speed;
-			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}*/
+			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			lastPos = pos;
 			pos.z -= deltaT * speed;
-			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}*/
+			}
 
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			lastPos = pos;
 			pos.z += deltaT * speed;
-			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}*/
+			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
@@ -807,7 +917,54 @@ class MyProject : public BaseProject {
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_WallW.uniformBuffersMemory[0][currentImage]);
-		
+
+		//For the texts
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.3f, 2.3f));
+		vkMapMemory(device, DS_Interact1.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Interact1.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(8.30f, 0.3f, 3.70f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Interact2.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Interact2.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.30f, 0.3f, -1.25f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Interact3.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Interact3.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, 0.3f, 8.20f));
+		vkMapMemory(device, DS_Interact4.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Interact4.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.3f, 4.75f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_Interact5.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Interact5.uniformBuffersMemory[0][currentImage]);
+
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, 0.3f, 8.20f));
+		vkMapMemory(device, DS_NeedKey1.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_NeedKey1.uniformBuffersMemory[0][currentImage]);
+
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.3f, 4.75f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		vkMapMemory(device, DS_NeedKey2.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_NeedKey2.uniformBuffersMemory[0][currentImage]);
 
 	}	
 
@@ -868,21 +1025,61 @@ class MyProject : public BaseProject {
 					default:
 						MAP[i][k] = 0;
 					}
-					std::cout << MAP[i][k];
 				}
-				std::cout << "\n";
 				i++;
 			}
-			std::cout << MAP[1][16];
 			newfile.close(); //close the file object.
 		}
 	}
 
 	bool possiblePos(glm::vec3 pos) {
+		bool res = false;
+
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
-			return true;
+			res = true;
 		}
-		return false;
+
+		// switch lever by position
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 7 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
+			switch ((int)std::round(-pos.z + 9)) {
+			case 11:
+				seeInteract[0] = 1;
+				break;
+			case 13:
+				seeInteract[1] = 1;
+				break;
+			case 8:
+				seeInteract[2] = 1;
+				break;
+			}
+		}
+
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3) {
+			if (hasKey[0] == 1)
+				seeNeedKey[0] = 1;
+			else
+				seeInteract[3];
+		}
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 4 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4) {
+			if (hasKey[1] == 1)
+				seeNeedKey[1] = 1;
+			else
+				seeInteract[4];
+		}
+
+		return res;
 	}
 
 	void interact() {
@@ -897,12 +1094,15 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
 			switch ((int)std::round(-pos.z + 9)) {
 			case 11:
+				std::cout << pos.x << " " << pos.z;
 				i = 0;
 				break;
 			case 13:
+				std::cout << pos.x << " " << pos.z;
 				i = 1;
 				break;
 			case 8:
+				std::cout << pos.x << " " << pos.z;
 				i = 2;
 				break;
 			}
@@ -932,6 +1132,7 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3)
 			&& hasKey[0] == 1) {
+			std::cout << pos.x << " " << pos.z;
 			i = 3;
 		}
 		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
@@ -940,6 +1141,7 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4)
 			&& hasKey[1] == 1) {
+			std::cout << pos.x << " " << pos.z;
 			i = 4;
 		}
 

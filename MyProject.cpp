@@ -11,7 +11,7 @@ const std::string CKEY_TEXTURE_PATH = "textures/CopperKey.png";
 const std::string FLOOR_MODEL_PATH = "models/floor.obj";
 const std::string FLOOR_TEXTURE_PATH = "textures/EOBSLM04.png";
 
-const std::string LEVER_MODEL_PATH = "models/lever.obj";
+const std::string LEVER_MODEL_PATH = "models/lever_test.obj";
 const std::string LEVER_TEXTURE_PATH = "textures/lever.png";
 
 const std::string DOOR_MODEL_PATH = "models/door.obj";
@@ -31,6 +31,7 @@ const std::string WALL_TEXTURE_PATH = "textures/EOBRB01.png";
 
 glm::vec3 ang = glm::vec3(10.0f, 90.0f, 0.0f);
 glm::vec3 pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
+
 
 glm::vec3 dirX = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -592,37 +593,37 @@ class MyProject : public BaseProject {
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
 			pos.x -= deltaT * speed;
-			if (!possiblePos(pos)) {
+			/*if (!possiblePos(pos)) {
 				pos = lastPos;
-			}
+			}*/
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			lastPos = pos;
 			pos.x += deltaT * speed;
-			possiblePos(pos);
+			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}
+			}*/
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			lastPos = pos;
 			pos.z -= deltaT * speed;
-			possiblePos(pos);
+			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}
+			}*/
 
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			lastPos = pos;
 			pos.z += deltaT * speed;
-			possiblePos(pos);
+			/*possiblePos(pos);
 			if (!possiblePos(pos)) {
 				pos = lastPos;
-			}
+			}*/
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
@@ -703,20 +704,20 @@ class MyProject : public BaseProject {
 		vkUnmapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage]);
 
 		//For the Lever
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.40f, 0.507397f, 2.2f)) *
-			glm::rotate(glm::mat4(1.0f), leverAngle, glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.50f, 0.507397f, 0.2f)) *
+			glm::rotate(glm::mat4(1.0f), -leverAngle, glm::vec3(0.0f, 0.0f, 1.0f));
 		vkMapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Lever1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(8.30f, 0.507397f, 3.60f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.10f, 0.507397f, 3.50f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Lever2.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.30f, 0.507397f, -1.40f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(1.15f, 0.507397f, -1.50f)) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_Lever3.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));

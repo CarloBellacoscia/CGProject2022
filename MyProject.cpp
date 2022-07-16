@@ -145,8 +145,8 @@ class MyProject : public BaseProject {
 		initialBackgroundColor = {0.01f, 0.03f, 0.01f, 1.0f};
 		
 		// Descriptor pool sizes (CHANGE BASED ON THE NUMEBRE OF THE OBJECTS)
-		uniformBlocksInPool = 25;
-		texturesInPool = 26;
+		uniformBlocksInPool = 31;
+		texturesInPool = 31;
 		setsInPool = 31;
 	}
 	
@@ -708,7 +708,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
-			pos.x -= deltaT * speed;
+			//pos.z += deltaT * speed;
+			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (!possiblePos(pos)) {
 				pos = lastPos;
 			}
@@ -716,7 +718,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			lastPos = pos;
-			pos.x += deltaT * speed;
+			//pos.z -= deltaT * speed;
+			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (!possiblePos(pos)) {
 				pos = lastPos;
 			}
@@ -724,7 +728,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			lastPos = pos;
-			pos.z -= deltaT * speed;
+			//pos.x -= deltaT * speed;
+			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (!possiblePos(pos)) {
 				pos = lastPos;
 			}
@@ -733,7 +739,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			lastPos = pos;
-			pos.z += deltaT * speed;
+			//pos.x += deltaT * speed;
+			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (!possiblePos(pos)) {
 				pos = lastPos;
 			}

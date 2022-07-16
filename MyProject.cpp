@@ -48,8 +48,8 @@ float deltaDoor[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 float deltaKey[2] = { 0.0f, 0.0f };
 int hasKey[2] = { 0, 0 };
 
-int seeInteract[5] = { 0, 0, 0, 0, 0 };
-int seeNeedKey[2] = { 0, 0 };
+float deltaInteract[5] = { -10.0f, -10.0f, -10.0f, -10.0f, -10.0f };
+float deltaNeedKey[2] = { -10.0f, -10.0f };
 
 
 
@@ -616,44 +616,44 @@ class MyProject : public BaseProject {
 			P1.pipelineLayout, 1, 1, &DS_Interact1.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[0], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Interact2.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[1], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Interact3.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[2], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Interact4.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[3], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Interact5.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeInteract[4], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_NeedKey1.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeNeedKey[0], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_NeedKey2.descriptorSets[currentImage],
 			0, nullptr);
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_WallW.indices.size()), seeNeedKey[1], 0, 0, 0);
+			static_cast<uint32_t>(M_WallW.indices.size()), 1, 0, 0, 0);
 		
 	}
 
@@ -677,7 +677,7 @@ class MyProject : public BaseProject {
 		glm::vec3 lastPos = pos;
 
 		const float speed = 0.7;
-		const float angSpeed = 25.0;
+		const float angSpeed = 30.0;
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
 			ang.y -= deltaT * angSpeed;
@@ -927,47 +927,47 @@ class MyProject : public BaseProject {
 		vkUnmapMemory(device, DS_WallW.uniformBuffersMemory[0][currentImage]);
 
 		//For the texts
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.3f, 2.3f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, deltaInteract[0], 2.3f));
 		vkMapMemory(device, DS_Interact1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Interact1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(8.30f, 0.3f, 3.70f)) *
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(8.30f, deltaInteract[1], 3.70f)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_Interact2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Interact2.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.30f, 0.3f, -1.25f)) *
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(3.30f, deltaInteract[2], -1.25f)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_Interact3.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Interact3.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, 0.3f, 8.20f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, deltaInteract[3], 8.20f));
 		vkMapMemory(device, DS_Interact4.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Interact4.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.3f, 4.75f)) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, deltaInteract[4], 3.25f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_Interact5.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Interact5.uniformBuffersMemory[0][currentImage]);
 
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, 0.3f, 8.20f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(6.35f, deltaNeedKey[0], 8.20f));
 		vkMapMemory(device, DS_NeedKey1.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_NeedKey1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, 0.3f, 4.75f)) *
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, deltaNeedKey[1], 4.75f)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_NeedKey2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
@@ -1044,7 +1044,25 @@ class MyProject : public BaseProject {
 		bool res = false;
 
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
-			res = true;
+			if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 2 ||
+				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
+				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4) {
+				res = false;
+			}
+			else {
+				res = true;
+			}
+
+			if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 7 ||
+				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 3 ||
+				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 4) {
+				for (int k = 0; k < 5; k++) {
+					if (k < 3)
+						deltaNeedKey[k] = -10.0f;
+
+					deltaInteract[k] = -10.0f;
+				}
+			}
 		}
 
 		// switch lever by position
@@ -1055,13 +1073,13 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
 			switch ((int)std::round(-pos.z + 9)) {
 			case 11:
-				seeInteract[0] = 1;
+				deltaInteract[0] = 0.3f;
 				break;
 			case 13:
-				seeInteract[1] = 1;
+				deltaInteract[1] = 0.3f;
 				break;
 			case 8:
-				seeInteract[2] = 1;
+				deltaInteract[2] = 0.3f;
 				break;
 			}
 		}
@@ -1071,20 +1089,20 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3) {
-			if (hasKey[0] == 1)
-				seeNeedKey[0] = 1;
+			if (hasKey[0] == 0)
+				deltaNeedKey[0] = 0.3f;
 			else
-				seeInteract[3];
+				deltaInteract[3] = 0.3f;
 		}
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
 			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 4 ||
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 4 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4) {
-			if (hasKey[1] == 1)
-				seeNeedKey[1] = 1;
+			if (hasKey[1] == 0)
+				deltaNeedKey[1] = 0.3f;
 			else
-				seeInteract[4];
+				deltaInteract[4] = 0.3f;
 		}
 
 		return res;
@@ -1102,16 +1120,33 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
 			switch ((int)std::round(-pos.z + 9)) {
 			case 11:
-				std::cout << pos.x << " " << pos.z;
+				if (MAP[12][10] == 2) {
+					MAP[12][10] = 8;
+				}
+				else if (MAP[12][10] == 8) {
+					MAP[12][10] = 2;
+				}
 				i = 0;
 				break;
 			case 13:
-				std::cout << pos.x << " " << pos.z;
+				if (MAP[12][15] == 2) {
+					MAP[12][15] = 8;
+				}
+				else if (MAP[12][15] == 8) {
+					MAP[12][15] = 2;
+				}
 				i = 1;
 				break;
 			case 8:
-				std::cout << pos.x << " " << pos.z;
+				if (MAP[7][10] == 2) {
+					MAP[7][10] = 8;
+				}
+				else if (MAP[7][10] == 8) {
+					MAP[7][10] = 2;
+				}
 				i = 2;
+				break;
+			default:
 				break;
 			}
 		}
@@ -1140,7 +1175,12 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3)
 			&& hasKey[0] == 1) {
-			std::cout << pos.x << " " << pos.z;
+			if (MAP[17][13] == 3) {
+				MAP[17][13] = 8;
+			}
+			else if (MAP[17][13] == 8) {
+				MAP[17][13] = 3;
+			}
 			i = 3;
 		}
 		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
@@ -1149,7 +1189,12 @@ class MyProject : public BaseProject {
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
 			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4)
 			&& hasKey[1] == 1) {
-			std::cout << pos.x << " " << pos.z;
+			if (MAP[13][18] == 4) {
+				MAP[13][18] = 8;
+			}
+			else if (MAP[13][18] == 8) {
+				MAP[13][18] = 4;
+			}
 			i = 4;
 		}
 

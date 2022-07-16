@@ -967,8 +967,8 @@ class MyProject : public BaseProject {
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_NeedKey1.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, deltaNeedKey[1], 4.75f)) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f, deltaNeedKey[1], 3.25f)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		vkMapMemory(device, DS_NeedKey2.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));

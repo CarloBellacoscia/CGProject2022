@@ -1,7 +1,6 @@
-// This has been adapted from the Vulkan tutorial
-
 #include "MyProject.hpp"
 
+// Load all the paths needed 
 const std::string MAP_PATH = "textures/map.txt";
 
 const std::string KEY_MODEL_PATH = "models/key.obj";
@@ -33,12 +32,9 @@ const std::string TEXT_MODEL_PATH = "models/text.obj";
 const std::string INTERACT_TEXTURE_PATH = "textures/interact.png";
 const std::string NEED_KEY_TEXTURE_PATH = "textures/needKey.png";
 
+// Initialize some useful data
 glm::vec3 ang = glm::vec3(10.0f, 90.0f, 0.0f);
 glm::vec3 pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
-
-
-glm::vec3 dirX = glm::vec3(1.0f, 0.0f, 0.0f);
-glm::vec3 dirZ = glm::vec3(0.0f, 0.0f, 1.0f);
 
 int MAP[24][24];
 
@@ -145,8 +141,8 @@ class MyProject : public BaseProject {
 		initialBackgroundColor = {0.01f, 0.03f, 0.01f, 1.0f};
 		
 		// Descriptor pool sizes (CHANGE BASED ON THE NUMEBRE OF THE OBJECTS)
-		uniformBlocksInPool = 31;
-		texturesInPool = 31;
+		uniformBlocksInPool = 31;	//should be 11
+		texturesInPool = 31;		//shoud be 10
 		setsInPool = 31;
 	}
 	
@@ -681,12 +677,10 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
 			ang.y -= deltaT * angSpeed;
-			//dirX = glm::vec3(glm::rotate(glm::mat4(1.0f), -deltaT * angSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(dirX, 1.0f));
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
 			ang.y += deltaT * angSpeed;
-			//dirX = glm::vec3(glm::rotate(glm::mat4(1.0f), -deltaT * angSpeed, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(dirX, 1.0f));
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_UP)) {
@@ -708,7 +702,6 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
-			//pos.z += deltaT * speed;
 			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (!possiblePos(pos)) {
@@ -718,7 +711,6 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			lastPos = pos;
-			//pos.z -= deltaT * speed;
 			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
 			if (!possiblePos(pos)) {
@@ -728,7 +720,6 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			lastPos = pos;
-			//pos.x -= deltaT * speed;
 			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (!possiblePos(pos)) {
@@ -739,7 +730,6 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			lastPos = pos;
-			//pos.x += deltaT * speed;
 			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
 			if (!possiblePos(pos)) {
@@ -757,16 +747,15 @@ class MyProject : public BaseProject {
 					
 		globalUniformBufferObject gubo{}; 
 		UniformBufferObject ubo{};
-		/* CONSTANT ROTATION OF THE OBJECT
-		ubo.model = glm::rotate(glm::mat4(1.0f),
-								time * glm::radians(90.0f),
-								glm::vec3(0.0f, 0.0f, 1.0f));
-		*/
+
 		void* data;
+
+		// View from the top
 		/*gubo.view = glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f),
 							   glm::vec3(3.0f, 0.0f, 0.0f),
 							   glm::vec3(0.0f, 1.0f, 0.0f));*/
 
+		// First person view
 		gubo.view = glm::rotate(glm::mat4(1.0), glm::radians(ang.z), glm::vec3(0, 0, 1)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(ang.x), glm::vec3(1, 0, 0)) *
 					glm::rotate(glm::mat4(1.0), glm::radians(ang.y), glm::vec3(0, 1, 0)) *
@@ -782,6 +771,7 @@ class MyProject : public BaseProject {
 		memcpy(data, &gubo, sizeof(gubo));
 		vkUnmapMemory(device, DS_global.uniformBuffersMemory[0][currentImage]);
 		
+
 		// Here is where you actually update your uniforms
 
 		//For the Golden Key
@@ -974,39 +964,21 @@ class MyProject : public BaseProject {
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_NeedKey2.uniformBuffersMemory[0][currentImage]);
 
-	}	
-
-	//draw a circle of radius 10 in a fixed position
-	int curText = 0;
-	stbi_uc* stationMap;
-	int stationMapWidth, stationMapHeight;
-	bool canStepPoint(float x, float y) {
-		int pixX = round(fmax(0.0f, fmin(stationMapWidth - 1, (x + 10) * stationMapWidth / 20.0)));
-		int pixY = round(fmax(0.0f, fmin(stationMapHeight - 1, (y + 10) * stationMapHeight / 20.0)));
-		int pix = (int)stationMap[stationMapWidth * pixY + pixX];
-		//std::cout << pixX << " " << pixY << " " << x << " " << y << " \t P = " << pix << "\n";		
-		return pix > 128;
-	}
-	const float checkRadius = 0.1;
-	const int checkSteps = 12;
-	bool canStep(float x, float y) {
-		for (int i = 0; i < checkSteps; i++) {
-			if (!canStepPoint(x + cos(6.2832 * i / (float)checkSteps) * checkRadius,
-				y + sin(6.2832 * i / (float)checkSteps) * checkRadius)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
+	// Setting the MAP matrix from the txt file with all the positions
 	void setMap() {
 
 		std::fstream newfile;
-		newfile.open(MAP_PATH, std::ios::in); //open a file to perform read operation using file object
-		if (newfile.is_open()) {   //checking whether the file is open
+		newfile.open(MAP_PATH, std::ios::in);
+
+		if (newfile.is_open()) {
+
 			std::string tp;
 			int i = 0;
-			while (getline(newfile, tp)) { //read data from file object and put it into string.
+
+			// Set a number for each character
+			while (getline(newfile, tp)) {
 				for (int k = 0; k <= tp.size(); k++) {
 					switch (tp.c_str()[k]) {
 					case ' ':
@@ -1036,14 +1008,18 @@ class MyProject : public BaseProject {
 				}
 				i++;
 			}
-			newfile.close(); //close the file object.
+			newfile.close();
 		}
 	}
 
+	// Check if the new position is a possible one or not
 	bool possiblePos(glm::vec3 pos) {
 		bool res = false;
 
+		// Check if it's in the map
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
+
+			// Check if it's in front of a closed door
 			if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 2 ||
 				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
 				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4) {
@@ -1053,6 +1029,7 @@ class MyProject : public BaseProject {
 				res = true;
 			}
 
+			// Removing the text objects
 			if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 7 ||
 				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 3 ||
 				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] != 4) {
@@ -1065,7 +1042,7 @@ class MyProject : public BaseProject {
 			}
 		}
 
-		// switch lever by position
+		// Adding text objects if it's near to a lever
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
 			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
@@ -1084,6 +1061,7 @@ class MyProject : public BaseProject {
 			}
 		}
 
+		// Adding text objects if it's near to a door closed by a key
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
 			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 3 ||
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
@@ -1112,7 +1090,7 @@ class MyProject : public BaseProject {
 
 		int i = -1;
 
-		// switch lever by position
+		// Switch lever by position
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
 			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
@@ -1151,7 +1129,7 @@ class MyProject : public BaseProject {
 			}
 		}
 
-		// collect the keys
+		// Collect the keys
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 5 ||
 			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 5 ||
 			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 5 ||
@@ -1198,7 +1176,7 @@ class MyProject : public BaseProject {
 			i = 4;
 		}
 
-		// animation of lever and doors
+		// Animation of lever and doors
 		if (doorStatus[i] == 0) {
 			doorStatus[i] = 1;
 		}
@@ -1223,7 +1201,6 @@ class MyProject : public BaseProject {
 	}
 };
 
-// This is the main: probably you do not need to touch this!
 int main() {
 
     MyProject app;

@@ -672,8 +672,8 @@ class MyProject : public BaseProject {
 
 		glm::vec3 lastPos = pos;
 
-		const float margin = 0.2;
-		const float speed = 2;
+		const float margin = 0.3;
+		const float speed = 0.7;
 		const float angSpeed = 50.0;
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
@@ -697,10 +697,6 @@ class MyProject : public BaseProject {
 			pos = glm::vec3(0.85797f, -0.75f, -2.81876f);
 		}
 
-		if (glfwGetKey(window, GLFW_KEY_Q)) {
-			ang = glm::vec3(10.0f, 90.0f, 0.0f);
-		}
-
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
 			lastPos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
@@ -708,6 +704,7 @@ class MyProject : public BaseProject {
 			if (possiblePos(lastPos, margin) && possiblePos(lastPos, -margin)) {
 				pos = lastPos;
 			}
+
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
@@ -1029,10 +1026,10 @@ class MyProject : public BaseProject {
 	}
 
 	// Check if the new position is a possible one or not
-	bool possiblePos(glm::vec3 pos, float tmp) {
+	bool possiblePos(glm::vec3 pos, float margin) {
 		bool res = false;
-		pos.x += tmp;
-		pos.z += tmp;
+		pos.x += margin;
+		pos.z += margin;
 
 		// Check if it's in the map
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {

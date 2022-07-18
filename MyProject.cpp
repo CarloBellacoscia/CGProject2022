@@ -672,8 +672,9 @@ class MyProject : public BaseProject {
 
 		glm::vec3 lastPos = pos;
 
-		const float speed = 0.7;
-		const float angSpeed = 30.0;
+		const float margin = 0.2;
+		const float speed = 2;
+		const float angSpeed = 50.0;
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
 			ang.y -= deltaT * angSpeed;
@@ -702,27 +703,27 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			lastPos = pos;
-			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+			lastPos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
-			if (!possiblePos(pos)) {
+			if (possiblePos(lastPos, margin) && possiblePos(lastPos, -margin)) {
 				pos = lastPos;
 			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			lastPos = pos;
-			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+			lastPos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0, 0, 1, 1)) * deltaT;
-			if (!possiblePos(pos)) {
+			if (possiblePos(lastPos, margin) && possiblePos(lastPos, -margin)) {
 				pos = lastPos;
 			}
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D)) {
 			lastPos = pos;
-			pos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+			lastPos -= speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
-			if (!possiblePos(pos)) {
+			if (possiblePos(lastPos, margin) && possiblePos(lastPos, -margin)) {
 				pos = lastPos;
 			}
 
@@ -730,9 +731,9 @@ class MyProject : public BaseProject {
 
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			lastPos = pos;
-			pos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
+			lastPos += speed * glm::vec3(glm::rotate(glm::mat4(1.0f), -glm::radians(ang.y),
 				glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(1, 0, 0, 1)) * deltaT;
-			if (!possiblePos(pos)) {
+			if (possiblePos(lastPos, margin) && possiblePos(lastPos, -margin)) {
 				pos = lastPos;
 			}
 		}
@@ -1012,9 +1013,26 @@ class MyProject : public BaseProject {
 		}
 	}
 
+	bool posNum(int n) {
+		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == n ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == n ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == n ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == n ||
+			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == n ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 7)] == n ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 5)] == n ||
+			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 5)] == n ||
+			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 7)] == n)
+			return true;
+		else
+			return false;
+	}
+
 	// Check if the new position is a possible one or not
-	bool possiblePos(glm::vec3 pos) {
+	bool possiblePos(glm::vec3 pos, float tmp) {
 		bool res = false;
+		pos.x += tmp;
+		pos.z += tmp;
 
 		// Check if it's in the map
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
@@ -1043,11 +1061,7 @@ class MyProject : public BaseProject {
 		}
 
 		// Adding text objects if it's near to a lever
-		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 7 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
+		if (posNum(7)) {
 			switch ((int)std::round(-pos.z + 9)) {
 			case 11:
 				deltaInteract[0] = 0.3f;
@@ -1062,21 +1076,13 @@ class MyProject : public BaseProject {
 		}
 
 		// Adding text objects if it's near to a door closed by a key
-		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3) {
+		if (posNum(3)) {
 			if (hasKey[0] == 0)
 				deltaNeedKey[0] = 0.3f;
 			else
 				deltaInteract[3] = 0.3f;
 		}
-		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4) {
+		if (posNum(4)) {
 			if (hasKey[1] == 0)
 				deltaNeedKey[1] = 0.3f;
 			else
@@ -1091,11 +1097,7 @@ class MyProject : public BaseProject {
 		int i = -1;
 
 		// Switch lever by position
-		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 7 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 7 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 7) {
+		if (posNum(7)) {
 			switch ((int)std::round(-pos.z + 9)) {
 			case 11:
 				if (MAP[12][10] == 2) {
@@ -1130,29 +1132,16 @@ class MyProject : public BaseProject {
 		}
 
 		// Collect the keys
-		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 5 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 5 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 5 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 5 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 5) {
+		if (posNum(5)) {
 			hasKey[0] = 1;
 			deltaKey[0] = -0.2;
 		}
-		else if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 6 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 6 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 6 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 6 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 6) {
+		else if (posNum(6)) {
 			hasKey[1] = 1;
 			deltaKey[1] = -0.2;
 		}
 
-		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 3 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 3 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 3)
-			&& hasKey[0] == 1) {
+		if (posNum(3) && hasKey[0] == 1) {
 			if (MAP[17][13] == 3) {
 				MAP[17][13] = 8;
 			}
@@ -1161,12 +1150,7 @@ class MyProject : public BaseProject {
 			}
 			i = 3;
 		}
-		if ((MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 8)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 10)][(int)std::round(-pos.x + 6)] == 4 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 7)] == 4 ||
-			MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 5)] == 4)
-			&& hasKey[1] == 1) {
+		if (posNum(4) && hasKey[1] == 1) {
 			if (MAP[13][18] == 4) {
 				MAP[13][18] = 8;
 			}

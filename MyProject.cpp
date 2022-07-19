@@ -1179,7 +1179,7 @@ class MyProject : public BaseProject {
 				leverAngle[i] = 0.0f;
 			break;
 		case 1:
-			deltaDoor[i] = 0.9f;
+			deltaDoor[i] = 0.8f;
 			if(i<=2)
 				leverAngle[i] = 30.0f;
 			break;

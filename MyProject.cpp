@@ -1034,6 +1034,9 @@ class MyProject : public BaseProject {
 		// Check if it's in the map
 		if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] > 0) {
 
+			pos.x -= margin;
+			pos.z -= margin;
+
 			// Check if it's in front of a closed door
 			if (MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 2 ||
 				MAP[(int)std::round(-pos.z + 9)][(int)std::round(-pos.x + 6)] == 3 ||
